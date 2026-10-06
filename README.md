@@ -48,10 +48,10 @@ enforced, but `free` and `nproc` inside a node still report the host's totals.
 | --- | --- |
 | `make up` | Build and start the fleet, write `keys/known_hosts` and `keys/ssh_config`, run `check` |
 | `make check` | Over SSH, per node: hostname, systemd running, sudo working |
-| `make ssh N=02` | SSH as `deploy` |
-| `make console N=02` | Root shell through Docker. Works when SSH is broken |
+| `make ssh 02` | SSH as `deploy` |
+| `make console 02` | Root shell through Docker. Works when SSH is broken |
 | `make ps` | Container status |
-| `make logs N=02` | Last 100 journal lines |
+| `make logs 02` | Last 100 journal lines |
 | `make stop` / `make start` | Power off / on. Files, packages and services are kept |
 | `make down` | Remove the nodes. Everything inside them is lost; the login key is kept |
 | `make reset` | `down`, then `up` with fresh nodes |
@@ -102,7 +102,7 @@ Data that must survive `make down` belongs on a named volume at a data path such
 | --- | --- |
 | `Pool overlaps with other one on this address space` | Another network uses `10.80.0.0/24`; change the subnet and IPs in `compose.yaml` |
 | `port is already allocated` | Something else uses `2201-2203`; change the ports in `compose.yaml` |
-| `make check` shows `FAIL` | `make console N=..` then `systemctl --failed` |
+| `make check` shows `FAIL` | `make console 02` then `systemctl --failed` |
 | `Host key verification failed` | The node was recreated outside `make up`; run `make up` |
 | `bind source path does not exist` | `docker compose up` was run directly; run `make up` |
 
