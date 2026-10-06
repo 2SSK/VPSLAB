@@ -101,7 +101,7 @@ Data that must survive `make down` belongs on a named volume at a data path such
 | `port is already allocated` | Something else uses `2201-2203`; change the ports in `compose.yaml` |
 | `make check` shows `FAIL` | `make console N=..` then `systemctl --failed` |
 | `Host key verification failed` | The node was recreated outside `make up`; run `make up` |
-| `keys/id_ed25519.pub` is a directory | `docker compose up` was run directly; `rm -r keys/id_ed25519.pub`, then `make up` |
+| `bind source path does not exist` | `docker compose up` was run directly; run `make up` |
 
 ## License
 

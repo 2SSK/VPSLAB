@@ -9,6 +9,13 @@ x-vps: &vps
   tmpfs: [/run, /run/lock]
   stop_grace_period: 30s
   restart: unless-stopped
+  volumes:
+    - type: bind
+      source: ./keys/id_ed25519.pub
+      target: /etc/vpslab/authorized_keys
+      read_only: true
+      bind:
+        create_host_path: false
   logging:
     driver: local
     options:
@@ -29,7 +36,6 @@ services:
     networks:
       vpslab:
         ipv4_address: 10.80.0.11
-    volumes: [./keys/id_ed25519.pub:/etc/vpslab/authorized_keys:ro]
 
   vps-02:
     <<: *vps
@@ -39,7 +45,6 @@ services:
     networks:
       vpslab:
         ipv4_address: 10.80.0.12
-    volumes: [./keys/id_ed25519.pub:/etc/vpslab/authorized_keys:ro]
 
   vps-03:
     <<: *vps
@@ -49,7 +54,6 @@ services:
     networks:
       vpslab:
         ipv4_address: 10.80.0.13
-    volumes: [./keys/id_ed25519.pub:/etc/vpslab/authorized_keys:ro]
 
 networks:
   vpslab:
