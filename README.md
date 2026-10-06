@@ -48,6 +48,7 @@ enforced, but `free` and `nproc` inside a node still report the host's totals.
 | --- | --- |
 | `make up` | Build and start the fleet, write `keys/known_hosts` and `keys/ssh_config`, run `check` |
 | `make check` | Over SSH, per node: hostname, systemd running, sudo working |
+| `make test` | Full smoke test: identity, SSH policy, networking, sandboxing, isolation, caps |
 | `make ssh 02` | SSH as `deploy` |
 | `make console 02` | Root shell through Docker. Works when SSH is broken |
 | `make ps` | Container status |
