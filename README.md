@@ -1,5 +1,7 @@
 # VPS Lab
 
+![make up, an SSH session into a node, installing nginx](docs/preview.gif)
+
 Disposable Ubuntu 24.04 servers on your workstation that behave like fresh VPSes. Deploy and test
 real projects over SSH without renting machines.
 
