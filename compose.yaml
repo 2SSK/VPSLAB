@@ -7,6 +7,9 @@ x-vps: &vps
   security_opt: [writable-cgroups=true]
   cap_add: [NET_ADMIN, SYS_ADMIN]
   tmpfs: [/run, /run/lock]
+  cpus: 1
+  mem_limit: 1g
+  pids_limit: 2048
   stop_grace_period: 30s
   restart: unless-stopped
   volumes:

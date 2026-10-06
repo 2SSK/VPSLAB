@@ -39,6 +39,9 @@ make down      # remove the nodes
 
 Nodes reach each other by name (`ping vps-02`) or IP.
 
+Each node is capped at 1 CPU, 1 GiB of memory and 2048 processes, like a small VPS. The caps are
+enforced, but `free` and `nproc` inside a node still report the host's totals.
+
 ## Commands
 
 | Command | Does |
