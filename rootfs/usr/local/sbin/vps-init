@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ -s /etc/machine-id ]] || tr -d - </proc/sys/kernel/random/uuid >/etc/machine-id
+ssh-keygen -A >/dev/null
+
+key=/etc/vpslab/authorized_keys
+if [[ -r $key ]]; then
+  for home in /root /home/deploy; do
+    owner=$(stat -c %U "$home")
+    if [[ ! -e $home/.ssh/authorized_keys ]]; then
+      install -d -m 0700 -o "$owner" -g "$owner" "$home/.ssh"
+      install -m 0600 -o "$owner" -g "$owner" "$key" "$home/.ssh/authorized_keys"
+    fi
+  done
+fi
+
+exec "$@"
