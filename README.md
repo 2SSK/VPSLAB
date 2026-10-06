@@ -1,12 +1,21 @@
-# VPS Lab
+# Ubuntu VPS Lab
 
 ![make up, an SSH session into a node, installing nginx](docs/preview.gif)
 
-Disposable Ubuntu 24.04 servers on your workstation that behave like fresh VPSes. Deploy and test
-real projects over SSH without renting machines.
+Disposable Ubuntu 24.04 server-like nodes on your workstation for testing deployments and
+DevOps/SRE automation over SSH, without renting machines.
 
 Each node runs systemd as PID 1, sshd, sudo, cron and journald, has a static private IP, and
-installs packages with `apt` like any Ubuntu server.
+installs packages with `apt`. systemd is there on purpose: the point is to exercise real services,
+timers and logs, not just a shell.
+
+```text
+make ── scripts/lab.sh ── docker compose
+                            ├── vps-01   10.80.0.11   127.0.0.1:2201
+                            ├── vps-02   10.80.0.12   127.0.0.1:2202
+                            └── vps-03   10.80.0.13   127.0.0.1:2203
+                                 Ubuntu 24.04 · systemd · sshd · cron · journald
+```
 
 > Nodes are containers, not VMs. They share the host's kernel, clock and disks. Kernel upgrades,
 > boot, clock skew and power-loss durability cannot be tested here, and `free`/`nproc` report the
@@ -15,19 +24,22 @@ installs packages with `apt` like any Ubuntu server.
 ## Requirements
 
 - Linux with cgroup v2
-- Docker Engine with Compose v2 (tested on Engine 29.8, Compose 5.6)
+- Docker Engine with Compose v2
 - OpenSSH client
 - Free: ports `2201-2203` on `127.0.0.1` and subnet `10.80.0.0/24`
+
+Tested on Arch Linux x86_64, kernel 7.2, cgroup v2, Docker Engine 29.8, Compose 5.6.
 
 ## Quick start
 
 ```bash
 make up        # build the image, start vps-01..03, trust host keys, run checks
-make ssh       # ssh deploy@vps-01
+make test      # 38 checks across the fleet
+make ssh 02    # ssh deploy@vps-02
 make down      # remove the nodes
 ```
 
-`make up` ends with one `ok` line per node.
+`make up` ends with one `ok` line per node, `make test` with `0 failed`.
 
 ## Nodes
 
@@ -91,8 +103,13 @@ Data that must survive `make down` belongs on a named volume at a data path such
 
 ## Security
 
-- Nodes run without `--privileged`. They get only `NET_ADMIN` (firewall, routing) and `SYS_ADMIN`
-  (so systemd unit sandboxing applies). They cannot see host disks or change the host clock.
+- Nodes run without `--privileged`, in their own cgroup namespace, with two added capabilities:
+  - `NET_ADMIN` for firewall and routing inside the node.
+  - `SYS_ADMIN`, which is broad. It is needed because without it systemd silently skips unit
+    sandboxing (`ProtectSystem`, `PrivateTmp`), so a hardened unit that fails on a real server
+    would pass here. `make test` asserts sandboxing applies.
+- Clock, kernel modules and raw devices stay denied: nodes cannot change the host clock and have no
+  block device nodes. `make test` asserts both.
 - Only the public key is mounted into nodes. `keys/` is git-ignored; never commit it or reuse it.
 - SSH ports listen on `127.0.0.1` only.
 - Containers are not a security boundary. Do not run untrusted code in the lab.
